@@ -42,6 +42,8 @@ description: |-
 - `block_admission_control` (Boolean) This applies only if both `Enable admission control` and Enforce mode are set. This additional option must be selected for admission control to work if the KubeEnforcer is not connected to any Gateway. If this option is not selected, admission control will be disabled; this will have no effect on containers already running.
 - `container_activity_protection` (Boolean) Set `True` to apply Container Runtime Policies, Image Profiles, and Firewall Policies to containers.
 - `container_antivirus_protection` (Boolean) This setting is available only when you have license for `Advanced Malware Protection`. Send true to make use of the license and enable the `Real-time Malware Protection` control in the Container Runtime policies.
+- `container_secure_ai` (Boolean) Enable Secure AI for container workloads.
+- `container_secure_ai_local_models` (Boolean) Enable Secure AI local models for container workloads.
 - `description` (String) A description of the Aqua Enforcer group.
 - `enable_enforcer_group_prometheus` (Boolean) Enable Prometheus metrics for the enforcer group.
 - `enforce` (Boolean) Whether to enable enforce mode on the Enforcers, defaults to False.
@@ -53,6 +55,8 @@ description: |-
 - `host_network_protection` (Boolean) Set `True` to apply Firewall Policies to hosts, and allow recording network maps for Aqua services. The Network Firewall setting must be disabled when deploying the Aqua Enforcer on a machine running Rocky Linux. See https://docs.aquasec.com/docs/platform-support-limitations-rocky-linux for further information
 - `host_os` (String) The OS type for the host
 - `host_protection` (Boolean) Set `True` to enable all Host Runtime Policy controls except for `OS Users and Groups Allowed` and `OS Users and Groups Blocked`.
+- `host_secure_ai` (Boolean) Enable Secure AI for host workloads.
+- `host_secure_ai_local_models` (Boolean) Enable Secure AI local models for host workloads.
 - `host_user_protection` (Boolean) Set `True` to enable these Host Runtime Policy controls: `OS Users and Groups Allowed` and `OS Users and Groups Blocked`
 - `image_assurance` (Boolean) Set `True` to enable selected controls: Container Runtime Policy (`Block Non-Compliant Images`, `Block Unregistered Images`, and `Registries Allowed`) and Default Image Assurance Policy (`Images Blocked`).
 - `kube_bench_image_name` (String) See https://docs.aquasec.com/docs/securing-kubernetes-applications#section-configuration-hardening, The KubeEnforcer can deploy the Aqua Security kube-bench open-source product to perform Kubernetes CIS benchmark testing of nodes.

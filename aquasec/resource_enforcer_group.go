@@ -66,6 +66,26 @@ func resourceEnforcerGroup() *schema.Resource {
 				Description: "This setting is available only when you have license for `Advanced Malware Protection`. Send true to make use of the license and enable the `Real-time Malware Protection` control in the Host Runtime policies.",
 				Optional:    true,
 			},
+			"container_secure_ai": {
+				Type:        schema.TypeBool,
+				Description: "Enable Secure AI for container workloads.",
+				Optional:    true,
+			},
+			"container_secure_ai_local_models": {
+				Type:        schema.TypeBool,
+				Description: "Enable Secure AI local models for container workloads.",
+				Optional:    true,
+			},
+			"host_secure_ai": {
+				Type:        schema.TypeBool,
+				Description: "Enable Secure AI for host workloads.",
+				Optional:    true,
+			},
+			"host_secure_ai_local_models": {
+				Type:        schema.TypeBool,
+				Description: "Enable Secure AI local models for host workloads.",
+				Optional:    true,
+			},
 			"aqua_version": {
 				Type:        schema.TypeString,
 				Description: "Aqua server version",
@@ -550,6 +570,10 @@ func resourceEnforcerGroupRead(ctx context.Context, d *schema.ResourceData, m in
 	d.Set("host_user_protection", r.HostUserProtection)
 	d.Set("container_antivirus_protection", r.ContainerAntivirusProtection)
 	d.Set("host_assurance", r.HostAssurance)
+	d.Set("container_secure_ai", r.ContainerSecureAI)
+	d.Set("container_secure_ai_local_models", r.ContainerSecureAILocalModels)
+	d.Set("host_secure_ai", r.HostSecureAI)
+	d.Set("host_secure_ai_local_models", r.HostSecureAILocalModels)
 	d.Set("gateways", r.Gateways)
 	d.Set("allowed_applications", r.AllowedApplications)
 	d.Set("allowed_labels", r.AllowedLabels)
@@ -604,6 +628,10 @@ func resourceEnforcerGroupUpdate(ctx context.Context, d *schema.ResourceData, m 
 		"orchestrator",
 		"schedule_scan_settings",
 		"unified_mode",
+		"container_secure_ai",
+		"container_secure_ai_local_models",
+		"host_secure_ai",
+		"host_secure_ai_local_models",
 	) {
 
 		ac := m.(*client.Client)
@@ -683,6 +711,26 @@ func expandEnforcerGroup(d *schema.ResourceData) client.EnforcerGroup {
 	antivirusProtection, ok := d.GetOk("antivirus_protection")
 	if ok {
 		enforcerGroup.AntivirusProtection = antivirusProtection.(bool)
+	}
+
+	containerSecureAI, ok := d.GetOk("container_secure_ai")
+	if ok {
+		enforcerGroup.ContainerSecureAI = containerSecureAI.(bool)
+	}
+
+	containerSecureAILocalModels, ok := d.GetOk("container_secure_ai_local_models")
+	if ok {
+		enforcerGroup.ContainerSecureAILocalModels = containerSecureAILocalModels.(bool)
+	}
+
+	hostSecureAI, ok := d.GetOk("host_secure_ai")
+	if ok {
+		enforcerGroup.HostSecureAI = hostSecureAI.(bool)
+	}
+
+	hostSecureAILocalModels, ok := d.GetOk("host_secure_ai_local_models")
+	if ok {
+		enforcerGroup.HostSecureAILocalModels = hostSecureAILocalModels.(bool)
 	}
 
 	aquaVersion, ok := d.GetOk("aqua_version")

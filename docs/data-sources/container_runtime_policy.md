@@ -116,6 +116,9 @@ output "container_runtime_policy_details" {
 - `runtime_type` (String)
 - `scope_expression` (String) Logical expression of how to compute the dependency of the scope variables.
 - `scope_variables` (List of Object) List of scope attributes. (see [below for nested schema](#nestedatt--scope_variables))
+- `secure_ai_discovery` (List of Object) Configuration for Secure AI discovery. (see [below for nested schema](#nestedatt--secure_ai_discovery))
+- `secure_ai_protection` (List of Object) Configuration for Secure AI protection. (see [below for nested schema](#nestedatt--secure_ai_protection))
+- `secure_ai_unauthorized_models` (List of Object) Configuration for Secure AI unauthorized models detection. (see [below for nested schema](#nestedatt--secure_ai_unauthorized_models))
 - `type` (String)
 - `vpatch_version` (String)
 
@@ -290,5 +293,31 @@ Read-Only:
 - `attribute` (String)
 - `name` (String)
 - `value` (String)
+
+
+<a id="nestedatt--secure_ai_discovery"></a>
+### Nested Schema for `secure_ai_discovery`
+
+Read-Only:
+
+- `enabled` (Boolean) If true, Secure AI discovery is enabled.
+- `ignore_list` (List of String) List of service@model entries to ignore.
+
+
+<a id="nestedatt--secure_ai_protection"></a>
+### Nested Schema for `secure_ai_protection`
+
+Read-Only:
+
+- `enabled` (Boolean) If true, Secure AI protection is enabled.
+
+
+<a id="nestedatt--secure_ai_unauthorized_models"></a>
+### Nested Schema for `secure_ai_unauthorized_models`
+
+Read-Only:
+
+- `enabled` (Boolean) If true, unauthorized models detection is enabled.
+- `unauthorized_list` (List of String) List of service@model entries considered unauthorized.
 
 

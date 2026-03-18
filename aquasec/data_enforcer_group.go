@@ -346,6 +346,26 @@ func dataSourceEnforcerGroup() *schema.Resource {
 				Description: "This setting is available only when you have license for `Advanced Malware Protection`. Send true to make use of the license and enable the `Real-time Malware Protection` control in the Host Runtime policies.",
 				Computed:    true,
 			},
+			"container_secure_ai": {
+				Type:        schema.TypeBool,
+				Description: "Enable Secure AI for container workloads.",
+				Computed:    true,
+			},
+			"container_secure_ai_local_models": {
+				Type:        schema.TypeBool,
+				Description: "Enable Secure AI local models for container workloads.",
+				Computed:    true,
+			},
+			"host_secure_ai": {
+				Type:        schema.TypeBool,
+				Description: "Enable Secure AI for host workloads.",
+				Computed:    true,
+			},
+			"host_secure_ai_local_models": {
+				Type:        schema.TypeBool,
+				Description: "Enable Secure AI local models for host workloads.",
+				Computed:    true,
+			},
 			"host_user_protection": {
 				Type:        schema.TypeBool,
 				Description: " When set to `True` enables these Host Runtime Policy controls: `OS Users and Groups Allowed` and `OS Users and Groups Blocked`",
@@ -497,6 +517,10 @@ func dataEnforcerGroupRead(ctx context.Context, d *schema.ResourceData, m interf
 		d.Set("host_user_protection", group.HostUserProtection)
 		d.Set("container_antivirus_protection", group.ContainerAntivirusProtection)
 		d.Set("host_assurance", group.HostAssurance)
+		d.Set("container_secure_ai", group.ContainerSecureAI)
+		d.Set("container_secure_ai_local_models", group.ContainerSecureAILocalModels)
+		d.Set("host_secure_ai", group.HostSecureAI)
+		d.Set("host_secure_ai_local_models", group.HostSecureAILocalModels)
 		d.Set("gateways", group.Gateways)
 		d.Set("allowed_applications", group.AllowedApplications)
 		d.Set("allowed_labels", group.AllowedLabels)

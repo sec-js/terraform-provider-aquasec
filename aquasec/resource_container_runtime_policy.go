@@ -207,6 +207,70 @@ func resourceContainerRuntimePolicy() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
+			"secure_ai_discovery": {
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Description: "Configuration for Secure AI discovery.",
+				Optional:    true,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enabled": {
+							Type:        schema.TypeBool,
+							Description: "If true, Secure AI discovery is enabled.",
+							Optional:    true,
+						},
+						"ignore_list": {
+							Type:        schema.TypeList,
+							Description: "List of service@model entries to ignore (e.g. openai@gpt-4, openai@*).",
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+							Optional: true,
+						},
+					},
+				},
+			},
+			"secure_ai_protection": {
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Description: "Configuration for Secure AI protection.",
+				Optional:    true,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enabled": {
+							Type:        schema.TypeBool,
+							Description: "If true, Secure AI protection is enabled.",
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"secure_ai_unauthorized_models": {
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Description: "Configuration for Secure AI unauthorized models detection.",
+				Optional:    true,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enabled": {
+							Type:        schema.TypeBool,
+							Description: "If true, unauthorized models detection is enabled.",
+							Optional:    true,
+						},
+						"unauthorized_list": {
+							Type:        schema.TypeList,
+							Description: "List of service@model entries considered unauthorized (e.g. openai@gpt-4, openai@*).",
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+							Optional: true,
+						},
+					},
+				},
+			},
 			"file_integrity_monitoring": {
 				Type:        schema.TypeList,
 				Description: "Configuration for file integrity monitoring.",
@@ -1581,6 +1645,9 @@ func resourceContainerRuntimePolicyRead(ctx context.Context, d *schema.ResourceD
 	d.Set("blocked_packages", crp.PackageBlock.PackagesBlackList)
 	d.Set("monitor_system_time_changes", crp.SystemIntegrityProtection.MonitorAuditLogIntegrity)
 	d.Set("malware_scan_options", flattenMalwareScanOptions(crp.MalwareScanOptions))
+	d.Set("secure_ai_discovery", flattenSecureAIDiscovery(crp.SecureAIDiscovery))
+	d.Set("secure_ai_protection", flattenSecureAIProtection(crp.SecureAIProtection))
+	d.Set("secure_ai_unauthorized_models", flattenSecureAIUnauthorizedModels(crp.SecureAIUnauthorizedModels))
 	d.Set("failed_kubernetes_checks", flattenFailedKubernetesChecks(crp.FailedKubernetesChecks))
 	d.Set("enable_port_scan_protection", crp.EnablePortScanProtection)
 	d.Set("enable_crypto_mining_dns", crp.EnableCryptoMiningDns)
@@ -1719,6 +1786,9 @@ func resourceContainerRuntimePolicyUpdate(ctx context.Context, d *schema.Resourc
 		"container_exec",
 		"reverse_shell",
 		"failed_kubernetes_checks",
+		"secure_ai_discovery",
+		"secure_ai_protection",
+		"secure_ai_unauthorized_models",
 	) {
 
 		crp := expandContainerRuntimePolicy(d)
@@ -1988,6 +2058,32 @@ func expandContainerRuntimePolicy(d *schema.ResourceData) *client.RuntimePolicy 
 			ExcludeProcesses:       convertStringArrNull(v["exclude_processes"].([]interface{})),
 			IncludeDirectories:     convertStringArrNull(v["include_directories"].([]interface{})),
 			FileForensicCollection: v["file_forensic_collection"].(bool),
+		}
+	}
+
+	secureAIDiscoveryMap, ok := d.GetOk("secure_ai_discovery")
+	if ok {
+		v := secureAIDiscoveryMap.([]interface{})[0].(map[string]interface{})
+		crp.SecureAIDiscovery = client.SecureAIDiscovery{
+			Enabled:    v["enabled"].(bool),
+			IgnoreList: convertStringArrNull(v["ignore_list"].([]interface{})),
+		}
+	}
+
+	secureAIProtectionMap, ok := d.GetOk("secure_ai_protection")
+	if ok {
+		v := secureAIProtectionMap.([]interface{})[0].(map[string]interface{})
+		crp.SecureAIProtection = client.SecureAIProtection{
+			Enabled: v["enabled"].(bool),
+		}
+	}
+
+	secureAIUnauthorizedModelsMap, ok := d.GetOk("secure_ai_unauthorized_models")
+	if ok {
+		v := secureAIUnauthorizedModelsMap.([]interface{})[0].(map[string]interface{})
+		crp.SecureAIUnauthorizedModels = client.SecureAIUnauthorizedModels{
+			Enabled:          v["enabled"].(bool),
+			UnauthorizedList: convertStringArrNull(v["unauthorized_list"].([]interface{})),
 		}
 	}
 
@@ -2437,4 +2533,30 @@ func expandContainerRuntimePolicy(d *schema.ResourceData) *client.RuntimePolicy 
 		}
 	}
 	return &crp
+}
+
+func flattenSecureAIDiscovery(d client.SecureAIDiscovery) []map[string]interface{} {
+	return []map[string]interface{}{
+		{
+			"enabled":     d.Enabled,
+			"ignore_list": d.IgnoreList,
+		},
+	}
+}
+
+func flattenSecureAIProtection(p client.SecureAIProtection) []map[string]interface{} {
+	return []map[string]interface{}{
+		{
+			"enabled": p.Enabled,
+		},
+	}
+}
+
+func flattenSecureAIUnauthorizedModels(u client.SecureAIUnauthorizedModels) []map[string]interface{} {
+	return []map[string]interface{}{
+		{
+			"enabled":           u.Enabled,
+			"unauthorized_list": u.UnauthorizedList,
+		},
+	}
 }

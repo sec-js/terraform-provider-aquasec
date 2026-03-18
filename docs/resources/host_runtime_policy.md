@@ -80,6 +80,21 @@ resource "aquasec_host_runtime_policy" "host_runtime_policy" {
   monitor_system_time_changes  = true
   monitor_windows_services     = true
   monitor_system_log_integrity = true
+
+  # Secure AI controls
+  secure_ai_discovery {
+    enabled     = true
+    ignore_list = ["openai@gpt-4"]
+  }
+
+  secure_ai_protection {
+    enabled = true
+  }
+
+  secure_ai_unauthorized_models {
+    enabled           = true
+    unauthorized_list = ["openai@gpt-3"]
+  }
 }
 ```
 
@@ -166,6 +181,9 @@ resource "aquasec_host_runtime_policy" "host_runtime_policy" {
 - `scope` (Block List) Scope configuration. (see [below for nested schema](#nestedblock--scope))
 - `scope_expression` (String) Logical expression of how to compute the dependency of the scope variables.
 - `scope_variables` (Block List) List of scope attributes. (see [below for nested schema](#nestedblock--scope_variables))
+- `secure_ai_discovery` (Block List, Max: 1) Configuration for Secure AI discovery. (see [below for nested schema](#nestedblock--secure_ai_discovery))
+- `secure_ai_protection` (Block List, Max: 1) Configuration for Secure AI protection. (see [below for nested schema](#nestedblock--secure_ai_protection))
+- `secure_ai_unauthorized_models` (Block List, Max: 1) Configuration for Secure AI unauthorized models detection. (see [below for nested schema](#nestedblock--secure_ai_unauthorized_models))
 - `system_integrity_protection` (Block List, Max: 1) (see [below for nested schema](#nestedblock--system_integrity_protection))
 - `tripwire` (Block List, Max: 1) (see [below for nested schema](#nestedblock--tripwire))
 - `type` (String)
@@ -487,6 +505,32 @@ Required:
 Optional:
 
 - `name` (String) Name assigned to the attribute.
+
+
+<a id="nestedblock--secure_ai_discovery"></a>
+### Nested Schema for `secure_ai_discovery`
+
+Optional:
+
+- `enabled` (Boolean) If true, Secure AI discovery is enabled.
+- `ignore_list` (List of String) List of service@model entries to ignore (e.g. `openai@gpt-4`, `openai@*`).
+
+
+<a id="nestedblock--secure_ai_protection"></a>
+### Nested Schema for `secure_ai_protection`
+
+Optional:
+
+- `enabled` (Boolean) If true, Secure AI protection is enabled.
+
+
+<a id="nestedblock--secure_ai_unauthorized_models"></a>
+### Nested Schema for `secure_ai_unauthorized_models`
+
+Optional:
+
+- `enabled` (Boolean) If true, unauthorized models detection is enabled.
+- `unauthorized_list` (List of String) List of service@model entries considered unauthorized (e.g. `openai@gpt-4`, `openai@*`).
 
 
 <a id="nestedblock--system_integrity_protection"></a>

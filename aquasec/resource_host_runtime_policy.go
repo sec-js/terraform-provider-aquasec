@@ -485,6 +485,70 @@ func resourceHostRuntimePolicy() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
+			"secure_ai_discovery": {
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Description: "Configuration for Secure AI discovery.",
+				Optional:    true,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enabled": {
+							Type:        schema.TypeBool,
+							Description: "If true, Secure AI discovery is enabled.",
+							Optional:    true,
+						},
+						"ignore_list": {
+							Type:        schema.TypeList,
+							Description: "List of service@model entries to ignore (e.g. OpenAI@gpt-4, Anthropic@*).",
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+							Optional: true,
+						},
+					},
+				},
+			},
+			"secure_ai_protection": {
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Description: "Configuration for Secure AI protection.",
+				Optional:    true,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enabled": {
+							Type:        schema.TypeBool,
+							Description: "If true, Secure AI protection is enabled.",
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"secure_ai_unauthorized_models": {
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Description: "Configuration for Secure AI unauthorized models detection.",
+				Optional:    true,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enabled": {
+							Type:        schema.TypeBool,
+							Description: "If true, unauthorized models detection is enabled.",
+							Optional:    true,
+						},
+						"unauthorized_list": {
+							Type:        schema.TypeList,
+							Description: "List of service@model entries considered unauthorized (e.g. OpenAI@gpt-4, Mistral@*).",
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+							Optional: true,
+						},
+					},
+				},
+			},
 			//JSON
 			"failed_kubernetes_checks": {
 				Type:        schema.TypeList,
@@ -1707,6 +1771,9 @@ func resourceHostRuntimePolicyRead(ctx context.Context, d *schema.ResourceData, 
 	d.Set("os_users_blocked", crp.BlacklistedOsUsers.UserBlackList)
 	d.Set("os_groups_blocked", crp.BlacklistedOsUsers.GroupBlackList)
 	d.Set("malware_scan_options", flattenMalwareScanOptions(crp.MalwareScanOptions))
+	d.Set("secure_ai_discovery", flattenSecureAIDiscovery(crp.SecureAIDiscovery))
+	d.Set("secure_ai_protection", flattenSecureAIProtection(crp.SecureAIProtection))
+	d.Set("secure_ai_unauthorized_models", flattenSecureAIUnauthorizedModels(crp.SecureAIUnauthorizedModels))
 	d.Set("monitor_system_time_changes", crp.SystemIntegrityProtection.AuditSystemtimeChange)
 	d.Set("monitor_windows_services", crp.SystemIntegrityProtection.WindowsServicesMonitoring)
 	//d.Set("windows_registry_monitoring", flattenWindowsRegistryMonitoring(crp.RegistryAccessMonitoring))
@@ -1863,6 +1930,9 @@ func resourceHostRuntimePolicyUpdate(ctx context.Context, d *schema.ResourceData
 		"container_exec",
 		"reverse_shell",
 		"failed_kubernetes_checks",
+		"secure_ai_discovery",
+		"secure_ai_protection",
+		"secure_ai_unauthorized_models",
 	) {
 		crp := expandHostRuntimePolicy(d)
 		err := c.UpdateRuntimePolicy(crp)
@@ -2129,6 +2199,32 @@ func expandHostRuntimePolicy(d *schema.ResourceData) *client.RuntimePolicy {
 			ExcludeProcesses:       convertStringArrNull(v["exclude_processes"].([]interface{})),
 			IncludeDirectories:     convertStringArrNull(v["include_directories"].([]interface{})),
 			FileForensicCollection: v["file_forensic_collection"].(bool),
+		}
+	}
+
+	secureAIDiscoveryMap, ok := d.GetOk("secure_ai_discovery")
+	if ok {
+		v := secureAIDiscoveryMap.([]interface{})[0].(map[string]interface{})
+		crp.SecureAIDiscovery = client.SecureAIDiscovery{
+			Enabled:    v["enabled"].(bool),
+			IgnoreList: convertStringArrNull(v["ignore_list"].([]interface{})),
+		}
+	}
+
+	secureAIProtectionMap, ok := d.GetOk("secure_ai_protection")
+	if ok {
+		v := secureAIProtectionMap.([]interface{})[0].(map[string]interface{})
+		crp.SecureAIProtection = client.SecureAIProtection{
+			Enabled: v["enabled"].(bool),
+		}
+	}
+
+	secureAIUnauthorizedModelsMap, ok := d.GetOk("secure_ai_unauthorized_models")
+	if ok {
+		v := secureAIUnauthorizedModelsMap.([]interface{})[0].(map[string]interface{})
+		crp.SecureAIUnauthorizedModels = client.SecureAIUnauthorizedModels{
+			Enabled:          v["enabled"].(bool),
+			UnauthorizedList: convertStringArrNull(v["unauthorized_list"].([]interface{})),
 		}
 	}
 

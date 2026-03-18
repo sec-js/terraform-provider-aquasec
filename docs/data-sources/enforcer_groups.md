@@ -58,6 +58,8 @@ output "group_details" {
 - `connected_count` (Number) Number of connected enforcers in the enforcer group.
 - `container_activity_protection` (Boolean) When set to `True` applies Container Runtime Policies, Image Profiles, and Firewall Policies to containers.
 - `container_antivirus_protection` (Boolean) This setting is available only when you have license for `Advanced Malware Protection`. Send true to make use of the license and enable the `Real-time Malware Protection` control in the Container Runtime policies.
+- `container_secure_ai` (Boolean) Enable Secure AI for container workloads.
+- `container_secure_ai_local_models` (Boolean) Enable Secure AI local models for container workloads.
 - `description` (String) A description for the Aqua Enforcer group.
 - `disconnected_count` (Number) Number of disconnected enforcers in the enforcer group.
 - `enforce` (Boolean) Whether the enforce mode is enabled on the Enforcers.
@@ -72,6 +74,8 @@ output "group_details" {
 - `host_network_protection` (Boolean) When set to `True` applies Firewall Policies to hosts, and allows recording network maps for Aqua services. The Network Firewall setting must be disabled when deploying the Aqua Enforcer on a machine running Rocky Linux. See https://docs.aquasec.com/docs/platform-support-limitations-rocky-linux for further information
 - `host_os` (String) The OS type for the host
 - `host_protection` (Boolean) When set to `True` enables all Host Runtime Policy controls except for `OS Users and Groups Allowed` and `OS Users and Groups Blocked`.
+- `host_secure_ai` (Boolean) Enable Secure AI for host workloads.
+- `host_secure_ai_local_models` (Boolean) Enable Secure AI local models for host workloads.
 - `host_user_protection` (Boolean) When set to `True` enables these Host Runtime Policy controls: `OS Users and Groups Allowed` and `OS Users and Groups Blocked`
 - `hosts_count` (Number) Number of enforcers in the enforcer group.
 - `id` (String) The ID of this resource.

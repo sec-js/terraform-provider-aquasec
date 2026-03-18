@@ -523,6 +523,64 @@ func dataHostRuntimePolicy() *schema.Resource {
 				},
 				Computed: true,
 			},
+			"secure_ai_discovery": {
+				Type:        schema.TypeList,
+				Description: "Configuration for Secure AI discovery.",
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enabled": {
+							Type:        schema.TypeBool,
+							Description: "If true, Secure AI discovery is enabled.",
+							Computed:    true,
+						},
+						"ignore_list": {
+							Type:        schema.TypeList,
+							Description: "List of service@model entries to ignore.",
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+							Computed: true,
+						},
+					},
+				},
+			},
+			"secure_ai_protection": {
+				Type:        schema.TypeList,
+				Description: "Configuration for Secure AI protection.",
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enabled": {
+							Type:        schema.TypeBool,
+							Description: "If true, Secure AI protection is enabled.",
+							Computed:    true,
+						},
+					},
+				},
+			},
+			"secure_ai_unauthorized_models": {
+				Type:        schema.TypeList,
+				Description: "Configuration for Secure AI unauthorized models detection.",
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enabled": {
+							Type:        schema.TypeBool,
+							Description: "If true, unauthorized models detection is enabled.",
+							Computed:    true,
+						},
+						"unauthorized_list": {
+							Type:        schema.TypeList,
+							Description: "List of service@model entries considered unauthorized.",
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+							Computed: true,
+						},
+					},
+				},
+			},
 			"auditing": {
 				Type:        schema.TypeList,
 				MaxItems:    1,
@@ -618,6 +676,9 @@ func dataHostRuntimePolicyRead(ctx context.Context, d *schema.ResourceData, m in
 		d.Set("package_block", crp.PackageBlock.PackagesBlackList)
 		d.Set("port_scanning_detection", crp.EnablePortScanProtection)
 		d.Set("malware_scan_options", flattenMalwareScanOptions(crp.MalwareScanOptions))
+		d.Set("secure_ai_discovery", flattenSecureAIDiscovery(crp.SecureAIDiscovery))
+		d.Set("secure_ai_protection", flattenSecureAIProtection(crp.SecureAIProtection))
+		d.Set("secure_ai_unauthorized_models", flattenSecureAIUnauthorizedModels(crp.SecureAIUnauthorizedModels))
 		d.Set("monitor_system_time_changes", crp.SystemIntegrityProtection.AuditSystemtimeChange)
 		d.Set("monitor_windows_services", crp.SystemIntegrityProtection.WindowsServicesMonitoring)
 		d.Set("monitor_system_log_integrity", crp.SystemIntegrityProtection.Enabled)

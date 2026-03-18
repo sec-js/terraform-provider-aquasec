@@ -99,6 +99,10 @@ type EnforcerGroup struct {
 	ScheduleScanSettings                      EnforcerScheduleScanSettings `json:"schedule_scan_settings"`
 	EnableEnforcerGroupPrometheus             bool                         `json:"enable_enforcer_group_prometheus"`
 	UnifiedMode                               bool                         `json:"unified_mode"`
+	ContainerSecureAI                         bool                         `json:"container_secure_ai"`
+	ContainerSecureAILocalModels              bool                         `json:"container_secure_ai_local_models"`
+	HostSecureAI                              bool                         `json:"host_secure_ai"`
+	HostSecureAILocalModels                   bool                         `json:"host_secure_ai_local_models"`
 }
 
 // GetEnforcerGroup - returns single Enforcer group
