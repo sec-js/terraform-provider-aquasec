@@ -90,7 +90,10 @@ type RuntimePolicy struct {
 	BlockContainerExec       bool     `json:"block_container_exec,omitempty"`
 	IsOOTBPolicy             bool     `json:"is_ootb_policy,omitempty"`
 	RuntimeMode              int      `json:"runtime_mode,omitempty"`
-	ExcludeApplicationScopes []string `json:"exclude_application_scopes,omitempty"`
+	ExcludeApplicationScopes   []string                   `json:"exclude_application_scopes,omitempty"`
+	SecureAIDiscovery          SecureAIDiscovery          `json:"secure_ai_discovery"`
+	SecureAIProtection         SecureAIProtection         `json:"secure_ai_protection"`
+	SecureAIUnauthorizedModels SecureAIUnauthorizedModels `json:"secure_ai_unauthorized_models"`
 }
 
 type AllowedExecutables struct {
@@ -208,6 +211,20 @@ type MalwareScanOptions struct {
 	ExcludeProcesses      []string `json:"exclude_processes"`
 	IncludeDirectories    []string `json:"include_directories"`
 	FileForensicCollection bool     `json:"file_forensic_collection"`
+}
+
+type SecureAIDiscovery struct {
+	Enabled    bool     `json:"enabled"`
+	IgnoreList []string `json:"ignore_list"`
+}
+
+type SecureAIProtection struct {
+	Enabled bool `json:"enabled"`
+}
+
+type SecureAIUnauthorizedModels struct {
+	Enabled          bool     `json:"enabled"`
+	UnauthorizedList []string `json:"unauthorized_list"`
 }
 
 type PortBlock struct {
